@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+
+{% block content %}
+
+    <div class="mt-4 mb-2">
+        <h1>"{{ article.title }}"</h1>
+        <h5><i>Author:</i> {{ article.author }}</h5>
+        <hr>
+        <p>{{ article.text }}</p>
+        <p>{{ article.pub_date }}</p>
+    </div>
+    <div class="mt-4 mb-2">
+        {% if comments %}
+        <h3>Comments</h3>
+        <hr>
+            {% for comment in comments %}
+                <div class="mt-2 mb-2">
+                    <h5>{{ comment.author }}</h5>
+                    <p>{{ comment.comment_text }}</p>
+                    <i>{{ comment.pub_date }}</i>
+                </div>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <h3>No comments</h3>
+        {% endif %}
+    </div>
+    <div class="mt-4 mb-2">
+        {% if request.user.is_authenticated %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit">
+            </form>
+        {% else %}
+            <h5>Please, Sign In to comment this article.</h5>
+        {% endif %}
+    </div>
+
+
+{% endblock %}

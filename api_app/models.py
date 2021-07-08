@@ -16,6 +16,9 @@ class Article(models.Model):
 
     def was_published_recently(self):
         return self.pub_date >= (timezone.now() - datetime.timedelta(days=7))
+    
+    class Meta:
+        ordering = ['-pub_date']
 
 
 class Comment(models.Model):

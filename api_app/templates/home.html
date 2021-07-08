@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog{% endblock %}
+
+
+{% block content %}
+
+{% if object_list %}
+    {% for object in object_list %}
+        <div class=" mt-4 mb-2">
+            <a href="{% url 'article_detail' object.pk %}"><h3>{{ object.title }}</h3></a>
+            <i>Author:</i> {{ object.author }}
+            <p>{{ object.pub_date }}</p>
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <h3>No articles</h3>
+{% endif %}
+
+{% endblock %}
