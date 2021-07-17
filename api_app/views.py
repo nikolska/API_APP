@@ -1,14 +1,14 @@
-# import django_filters.rest_framework
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView , DetailView, FormView, ListView
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 
 from .forms import ArticleForm, ArticleSearchForm, CommentForm
 from .models import Article, Comment
@@ -64,24 +64,13 @@ class ArticleListView(ListView):
 # API
 
 class ArticleViewSet(viewsets.ModelViewSet):
-    queryset = get_list_or_404(Article)
+    queryset = Article.objects.all()
     serializer_class = ArticleCreateSerializer
     permission_classes = [IsAdminUser, IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
-    # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    
-
-    # def get_queryset(self):
-    #     queryset = Article.objects.all()
-    #     if self.request.GET.get('q'):
-    #         query = self.request.GET.get('q')
-    #         queryset = queryset.filter(
-    #             Q(title_icontains=query)|
-    #             Q(text__icontains=query)|
-    #             Q(author__username__icontains=query)|
-    #             Q(author__first_name__icontains=query)|
-    #             Q(author__last_name__icontains=query)
-    #         ).distinct()
-    #     return get_list_or_404(Article)
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['title', 'author__username', 'pub_date']
+    search_fields = ['title', 'author__username']
+    ordering_fields = ['title', 'author__username', 'pub_date']
 
     def list(self, request):
         articles = self.queryset

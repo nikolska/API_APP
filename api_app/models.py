@@ -5,6 +5,7 @@ from django.utils import timezone
 
 User = get_user_model()
 
+
 class Article(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
